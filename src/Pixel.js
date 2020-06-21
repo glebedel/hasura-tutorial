@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/react-hooks';
+import { UPDATE_COLOR } from './graphqlQueries';
 
 const Pixel = ({ id, color, newColor }) => {
-  const [pixelColor, changeColor] = useState(color);
+  const [updatePixelColor] = useMutation(UPDATE_COLOR);
+
   return (
     <span
       className="pixel"
       onClick={() => {
-        changeColor(newColor);
+        updatePixelColor({ variables: { id, color: newColor } });
       }}
-      style={{ backgroundColor: pixelColor }}
+      style={{ backgroundColor: color }}
     ></span>
   );
 };

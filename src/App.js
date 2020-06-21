@@ -1,12 +1,18 @@
-import React, { useState } from "react";
-import Pixel from "./Pixel";
-import ColorPicker from "./ColorPicker";
-
-const pixels = new Array(400).fill("white");
+import React, { useState } from 'react';
+import Pixel from './Pixel';
+import ColorPicker from './ColorPicker';
+import { useSubscription } from '@apollo/react-hooks';
+import { SUBSCRIPTION_GET_PIXELS } from './graphqlQueries';
 
 function App() {
-  const [color, changeColor] = useState("white");
+  const [color, changeColor] = useState('white');
+  const { loading, error, data } = useSubscription(SUBSCRIPTION_GET_PIXELS);
 
+  if (loading) {
+    return <h2> Loading ...</h2>;
+  } else if (error) {
+    return <h2>{JSON.stringify(error)}</h2>;
+  }
   return (
     <div className="content">
       <div className="logo">Draw</div>
@@ -14,8 +20,8 @@ function App() {
       <ColorPicker changeColor={changeColor} />
       <p>Click a Pixel</p>
       <div className="container">
-        {pixels.map((pixel, idx) => (
-          <Pixel color={pixel} key={idx} newColor={color} />
+        {data.pixels.map((pixel) => (
+          <Pixel {...pixel} key={pixel.id} newColor={color} />
         ))}
       </div>
     </div>
